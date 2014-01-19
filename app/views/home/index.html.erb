@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <script>
+      function appendResults(text) {
+        var results = document.getElementById('results');
+        results.appendChild(document.createElement('P'));
+        results.appendChild(document.createTextNode(text));
+      }
+
+      function makeRequest() {
+        var request = gapi.client.urlshortener.url.get({
+          'shortUrl': 'http://goo.gl/fbsS',
+          'projection':'FULL'
+        });
+        request.execute(function(response) {
+          appendResults(response.longUrl);
+          appendResults(response.analytics.allTime.shortUrlClicks);
+        });
+      }
+
+      function load() {
+        gapi.client.setApiKey('AIzaSyDG3sqHzRcs9VRq3sTNROwYBAWzojKoloo');
+        gapi.client.load('urlshortener', 'v1', makeRequest);
+      }
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=load"></script>
+  </head>
+  <body>
+    <div>hellllllloo!</div>
+    <input type="button" value="click me to get goo.gl analytics clicks" onclick="">
+    <div id="results"></div>
+    <div id="clicks"></div>
+    <script type="text/javascript">
+      var shortUrl = [];
+      function test(json){
+
+        for (var i=0; i < json.feed.entry.length; i++){
+          var entry = json.feed.entry[i];
+          if (entry.gs$cell.col == '3') {
+            shortUrl.push(entry.content.$t);
+          }
+        }
+        for (var i=0; i < shortUrl.length; i++){
+          var url = shortUrl[i];
+          $("#clicks").append(url).append("</br>");
+        }
+      }
+    </script>
+    <script type="text/javascript" src="https://spreadsheets.google.com/feeds/cells/0AjF9zJrj_kdUdGZUMldZNnFpallmaWNxazZobExSS1E/od6/public/values?alt=json-in-script&callback=test"></script>
+
+  </body>
+</html>
