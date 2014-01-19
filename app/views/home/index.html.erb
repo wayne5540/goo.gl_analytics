@@ -3,20 +3,27 @@
   <head>
     <script>
       function appendResults(text) {
+        $("#results").append(text);
+        $("#results").append("</br>");
+        /*
         var results = document.getElementById('results');
         results.appendChild(document.createElement('P'));
         results.appendChild(document.createTextNode(text));
+        */
       }
 
       function makeRequest() {
-        var request = gapi.client.urlshortener.url.get({
-          'shortUrl': 'http://goo.gl/fbsS',
-          'projection':'FULL'
-        });
-        request.execute(function(response) {
-          appendResults(response.longUrl);
-          appendResults(response.analytics.allTime.shortUrlClicks);
-        });
+        for (var i=0; i < shortUrl.length; i++){
+          var url = shortUrl[i];
+          var request = gapi.client.urlshortener.url.get({
+            'shortUrl': url,
+            'projection':'FULL'
+          });
+          request.execute(function(response) {
+            //           appendResults(response.longUrl);
+            appendResults(response.analytics.allTime.shortUrlClicks);
+          });
+        }
       }
 
       function load() {
@@ -27,14 +34,15 @@
     <script src="https://apis.google.com/js/client.js?onload=load"></script>
   </head>
   <body>
-    <div>hellllllloo!</div>
-    <input type="button" value="click me to get goo.gl analytics clicks" onclick="">
-    <div id="results"></div>
-    <div id="clicks"></div>
+    <div><h1>heeeeha~~~get goo.gl analytics clicks!</h1></div>
+    <div id="urlName"><p>名稱</p></div>
+    <hr>
+    <div id="shortUrl"><p>縮網址</p></div>
+    <hr>
+    <div id="results"><p>點擊數</p></div>
     <script type="text/javascript">
       var shortUrl = [];
       function test(json){
-
         for (var i=0; i < json.feed.entry.length; i++){
           var entry = json.feed.entry[i];
           if (entry.gs$cell.col == '3') {
@@ -43,7 +51,14 @@
         }
         for (var i=0; i < shortUrl.length; i++){
           var url = shortUrl[i];
-          $("#clicks").append(url).append("</br>");
+          $("#shortUrl").append(url).append("</br>");
+        }
+        for (var i=0; i < json.feed.entry.length; i++){
+          var entry = json.feed.entry[i];
+          if (entry.gs$cell.col == '2') {
+            var name = entry.content.$t
+            $("#urlName").append(name).append("</br>");
+          }
         }
       }
     </script>
