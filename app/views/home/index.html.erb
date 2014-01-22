@@ -2,9 +2,14 @@
 <html>
   <head>
     <script>
+      
       function appendResults(text) {
+        $("<tr></tr>").append("<td>" + text.short + "</td>" + "<td>" + text.clicks + "</td>")
+        .appendTo("#results");
+        /*
         $("#results").append(text);
         $("#results").append("</br>");
+        */
         /*
         var results = document.getElementById('results');
         results.appendChild(document.createElement('P'));
@@ -13,6 +18,7 @@
       }
 
       function makeRequest() {
+        var resultContent = [];
         for (var i=0; i < shortUrl.length; i++){
           var url = shortUrl[i];
           var request = gapi.client.urlshortener.url.get({
@@ -20,8 +26,16 @@
             'projection':'FULL'
           });
           request.execute(function(response) {
+            
+            var result = {
+              short: response.id,
+              clicks: response.analytics.allTime.shortUrlClicks
+            };
+            appendResults(result);
+            console.log(result);
+            
             //           appendResults(response.longUrl);
-            appendResults(response.analytics.allTime.shortUrlClicks);
+            //appendResults(response.analytics.allTime.shortUrlClicks);
           });
         }
       }
@@ -39,7 +53,7 @@
     <hr>
     <div id="shortUrl"><p>縮網址</p></div>
     <hr>
-    <div id="results"><p>點擊數：</p></div>
+    <table id="results" border="solid 1px"><th>點擊數：</th></table>
     <script type="text/javascript">
       var shortUrl = [];
       function test(json){
