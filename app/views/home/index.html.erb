@@ -2,9 +2,9 @@
 <html>
   <head>
     <script>
-      
-      function appendResults(text, order) {
-        $("<tr></tr>").append("<td>" + order + "</td>" +"<td>" + text.short + "</td>" + "<td>" + text.clicks + "</td>")
+
+      function appendResults(text) {
+        $("<tr></tr>").append("<td>" + text.short + "</td>" + "<td>" + text.clicks + "</td>")
         .appendTo("#results");
         /*
         $("#results").append(text);
@@ -16,14 +16,44 @@
         results.appendChild(document.createTextNode(text));
         */
       }
-      var resultContents = [];
       function makeRequest() {
+        var promises = [];
         for (var i=0; i < shortUrl.length; i++){
+          var dfd = new jQuery.Deferred;
           var url = shortUrl[i];
           var request = gapi.client.urlshortener.url.get({
             'shortUrl': url,
             'projection':'FULL',
           });
+          request.execute(dfd.resolve);
+          /*
+          request.execute(function(response) {
+            dfd.resolve(response);      
+          });
+          */
+          promises.push(dfd.promise());
+        }
+        console.log(promises);
+        $.when.apply($, promises).done(function(){
+          promises = undefined;
+          console.log("here yougo");
+          console.log(arguments.length);
+          console.log(arguments);
+          for(var i=0; i < arguments.length; i++){
+            var response = arguments[i][0];
+            console.log("response here");
+            console.log(response); //here is the problem begin
+            if (!response.code){
+            var result = {
+              short: response.id,
+              clicks: response.analytics.allTime.shortUrlClicks
+            };
+            appendResults(result);
+            }
+          }
+        }); 
+          
+          /*
           request.execute(function(response) {
             console.log(response); //順序問題出在這
             var result = {
@@ -31,19 +61,18 @@
               clicks: response.analytics.allTime.shortUrlClicks
             };
             appendResults(result, i);         
-            //           appendResults(response.longUrl);
-            //appendResults(response.analytics.allTime.shortUrlClicks);
           });
-        }
-        console.log(resultContents);
+          */
+        // console.log(resultContents);
       }
 
       function load() {
+        console.log("assss!!!");
         gapi.client.setApiKey('AIzaSyDG3sqHzRcs9VRq3sTNROwYBAWzojKoloo');
         gapi.client.load('urlshortener', 'v1', makeRequest);
       }
     </script>
-    <script src="https://apis.google.com/js/client.js?onload=load"></script>
+    
   </head>
   <body>
     <div><h1>heeeeha~~~get goo.gl analytics clicks!</h1></div>
@@ -75,6 +104,6 @@
       }
     </script>
     <script type="text/javascript" src="https://spreadsheets.google.com/feeds/cells/0AjF9zJrj_kdUdGZUMldZNnFpallmaWNxazZobExSS1E/od6/public/values?alt=json-in-script&callback=test"></script>
-
+    <script src="https://apis.google.com/js/client.js?onload=load"></script>
   </body>
 </html>
