@@ -33,16 +33,14 @@
           */
           promises.push(dfd.promise());
         }
-        console.log(promises);
+        //console.log(promises);
         $.when.apply($, promises).done(function(){
           promises = undefined;
-          console.log("here yougo");
-          console.log(arguments.length);
-          console.log(arguments);
+          //console.log("here yougo");
+          //console.log(arguments.length);
+          //console.log(arguments);
           for(var i=0; i < arguments.length; i++){
             var response = arguments[i][0];
-            console.log("response here");
-            console.log(response); //here is the problem begin
             if (!response.code){
             var result = {
               short: response.id,
@@ -51,8 +49,9 @@
             appendResults(result);
             }
           }
-        }); 
-          
+        });
+        console.log("done");
+        $("#loading").html("<p>資料已撈完<p>");
           /*
           request.execute(function(response) {
             console.log(response); //順序問題出在這
@@ -76,11 +75,18 @@
   </head>
   <body>
     <div><h1>heeeeha~~~get goo.gl analytics clicks!</h1></div>
-    <div id="urlName"><p>名稱</p></div>
+    <div>
+      <h2>使用方法：</h2>
+      <p>點及下方連結進入google表單，將要查的LINE訊息貼在第三行即可</p>
+      <p>程式會自動抓只有縮網址的儲存格撈資料，只要確認短網址是獨立一格，前後無任何文字或符號即可</p>
+      <a href="https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGZUMldZNnFpallmaWNxazZobExSS1E&usp=drive_web#gid=0" target="_blank">點此進入google表單</a>
+    </div>
     <hr>
-    <div id="shortUrl"><p>縮網址</p></div>
-    <hr>
+    <h2>結果如下：</h2>
+    <p id="loading">撈資料中...</p>
     <table id="results" border="solid 1px"><th>點擊數：</th></table>
+    <hr>
+    <div id="shortUrl"><h2>GOOGLE表單內容</h2></div>
     <script type="text/javascript">
       var shortUrl = [];
       function test(json){
