@@ -3,8 +3,8 @@
   <head>
     <script>
       
-      function appendResults(text) {
-        $("<tr></tr>").append("<td>" + text.short + "</td>" + "<td>" + text.clicks + "</td>")
+      function appendResults(text, order) {
+        $("<tr></tr>").append("<td>" + order + "</td>" +"<td>" + text.short + "</td>" + "<td>" + text.clicks + "</td>")
         .appendTo("#results");
         /*
         $("#results").append(text);
@@ -16,28 +16,26 @@
         results.appendChild(document.createTextNode(text));
         */
       }
-
+      var resultContents = [];
       function makeRequest() {
-        var resultContent = [];
         for (var i=0; i < shortUrl.length; i++){
           var url = shortUrl[i];
           var request = gapi.client.urlshortener.url.get({
             'shortUrl': url,
-            'projection':'FULL'
+            'projection':'FULL',
           });
           request.execute(function(response) {
-            
+            console.log(response); //順序問題出在這
             var result = {
               short: response.id,
               clicks: response.analytics.allTime.shortUrlClicks
             };
-            appendResults(result);
-            console.log(result);
-            
+            appendResults(result, i);         
             //           appendResults(response.longUrl);
             //appendResults(response.analytics.allTime.shortUrlClicks);
           });
         }
+        console.log(resultContents);
       }
 
       function load() {
