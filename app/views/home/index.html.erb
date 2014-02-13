@@ -36,9 +36,9 @@
         //console.log(promises);
         $.when.apply($, promises).done(function(){
           promises = undefined;
-          //console.log("here yougo");
-          //console.log(arguments.length);
-          //console.log(arguments);
+          console.log("here yougo");
+          console.log(arguments.length);
+          console.log(arguments);
           for(var i=0; i < arguments.length; i++){
             var response = arguments[i][0];
             if (!response.code){

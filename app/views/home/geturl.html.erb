@@ -1,26 +1,38 @@
 <!doctype html>
 <html>
   <head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
   <script>
     var token = '';
-    
+    function getCallback(i) {
+       return function(data) {
+         if(!data.FaultCode){
+          showData(data, i);
+         }
+       };
+    };
     function getData(){
       console.log("get data suc");
       for (var i=0; i < urls.length; i++){
          var code = 'http://api.x.co/Reporting.svc/map/66fd4551595d447394028b1d3bd3ef4b/'+ urls[i] +'/total';
          $.ajax({
+           async: false,
            url: code,
            type: 'GET',
            dataType: 'jsonp',
-           success: function(data) { showData(data); },
+           success: getCallback(i),
            error: function() { console.log('ajax Failed!'); },
            beforeSend: setHeader
          });
       }
+      console.log("done")
     }
-    function showData(data){
+    function showData(data, i){
       $("<tr></tr>").append("<td>" + data + "</td>")
         .appendTo("#results");
+      $("<tr></tr>").append("<td>" + i + "</td>")
+        .appendTo("#results2");
+      console.log(data);
     }
     function setHeader(xhr) {
       xhr.setRequestHeader('Authorization', token);
@@ -36,6 +48,8 @@
     <a href="https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c" target="_blank">表單</a>
 <!--    <iframe width='500' height='300' frameborder='0' src='https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c'></iframe>-->
     <table id="results"></table>
+    <hr>
+    <table id="results2"></table>
     <button onclick="getData(); //location.reload();">get data</button>
     <script type="text/javascript">
       var urls = [];
