@@ -13,8 +13,8 @@
     };
     function getData(){
       console.log("get data suc");
-      for (var i=0; i < urls.length; i++){
-         var code = 'http://api.x.co/Reporting.svc/map/66fd4551595d447394028b1d3bd3ef4b/'+ urls[i] +'/total';
+      for (var i=0; i < myUrls.length; i++){
+         var code = 'http://api.x.co/Reporting.svc/map/66fd4551595d447394028b1d3bd3ef4b/'+ myUrls[i] +'/total';
          $.ajax({
            url: code,
            type: 'GET',
@@ -39,17 +39,24 @@
     function saveUrl(){
       console.log("gdoc get!");
     }
+    function getUrl(){
+      myUrls = $("#url").val().split(/[\/,\n,\s]+/);
+      getData();
+    }
+    
   </script>
   </head>
   <body>
-    <div>test</div>
+    <h2>把要查詢的網址們貼在下面(可以含文字)，然後按getUrl</h2>
+    <textarea id="url" style="min-width:700px;min-height:200px;"></textarea></br>
+    <button onclick="getUrl();">get Url</button>
+  <!--
     <h1>將要查詢的網址貼到第一行後按下get data即可</h1>
-    <a href="https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c" target="_blank">表單</a>
+    <a href="https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c" target="_blank">表單</a>-->
 <!--    <iframe width='500' height='300' frameborder='0' src='https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c'></iframe>-->
     <table id="results"></table>
     <hr>
     <table id="results2"></table>
-    <button onclick="getData(); //location.reload();">get data</button>
     <script type="text/javascript">
       var urls = [];
       function saveUrl(json){
