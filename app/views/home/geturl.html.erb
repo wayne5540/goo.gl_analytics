@@ -16,7 +16,6 @@
       for (var i=0; i < urls.length; i++){
          var code = 'http://api.x.co/Reporting.svc/map/66fd4551595d447394028b1d3bd3ef4b/'+ urls[i] +'/total';
          $.ajax({
-           async: false,
            url: code,
            type: 'GET',
            dataType: 'jsonp',
