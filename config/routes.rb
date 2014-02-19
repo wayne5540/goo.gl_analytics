@@ -1,7 +1,8 @@
 Helloworld::Application.routes.draw do
-  root 'home#index'
+  root 'home#homepage'
   get  "home/geturl"
   get 'xco' => 'home#geturl'
+  get 'google' => 'home#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
