@@ -3,16 +3,34 @@
   <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
   <script>
+    var successNum = 0;
     var token = '';
+    var callback = [];
     function getCallback(i) {
        return function(data) {
          if(!data.FaultCode){
-          showData(data, i);
+           var dataResult = { 
+             value: i,
+             data: data
+           };
+          callback.push(dataResult);
+          //showData(data, i);
          }
        };
     };
+    
+    function sortData(){
+      for ( var i=0; i <callback.length; i++ ){
+        newCallBack = callback.sort(function(a, b){
+          return a.value - b.value;
+        })
+      }
+      showData(newCallBack);
+    }
+
     function getData(){
-      console.log("get data suc");
+      callback=[];
+      successNum = 0;
       for (var i=0; i < myUrls.length; i++){
          var code = 'http://api.x.co/Reporting.svc/map/66fd4551595d447394028b1d3bd3ef4b/'+ myUrls[i] +'/total';
          $.ajax({
@@ -22,22 +40,28 @@
            success: getCallback(i),
            error: function() { console.log('ajax Failed!'); },
            beforeSend: setHeader
+         }).done(function(value){
+           console.log(value);
+           if(!value.FaultCode){
+             successNum += 1;
+             $("#status").text("目前抓到: " + successNum + "筆資料");
+           }
          });
       }
       console.log("done")
     }
-    function showData(data, i){
-      $("<tr></tr>").append("<td>" + data + "</td>")
-        .appendTo("#results");
-      $("<tr></tr>").append("<td>" + i + "</td>")
-        .appendTo("#results2");
-      console.log(data);
+    function showData(arr){
+      $("#results").empty();
+      $("#sort").empty();
+      for ( var i=0; i < arr.length; i++){
+        $("<tr></tr>").append("<td>" + arr[i].data + "</td>")
+          .appendTo("#results");
+        $("<tr></tr>").append("<td>" + i + "</td>")
+          .appendTo("#sort");
+      }
     }
     function setHeader(xhr) {
       xhr.setRequestHeader('Authorization', token);
-    }
-    function saveUrl(){
-      console.log("gdoc get!");
     }
     function getUrl(){
       myUrls = $("#url").val().split(/[\/,\n,\s]+/);
@@ -45,36 +69,29 @@
     }
     
   </script>
+    <style>
+      .result{
+        display:inline-block;
+        border:1px solid;
+        margin-right:40px;
+      }
+      .result td{
+        border:1px solid;
+      }
+    </style>
   </head>
   <body>
-    <h2>把要查詢的網址們貼在下面(可以含文字)，然後按getUrl</h2>
+    <h2>把要查詢的網址們貼在下面(可以含文字)，然後按抓資料</h2>
     <textarea id="url" style="min-width:700px;min-height:200px;"></textarea></br>
-    <button onclick="getUrl();">get Url</button>
+    <button onclick="getUrl();">抓資料</button>
+    <div>※請等抓完所有資料後再按顯示資料</div>
+    <div id="status">目前：尚未開始抓取資料</div>
+    <button onclick="sortData();">顯示資料</button>
+  <hr>
   <!--
     <h1>將要查詢的網址貼到第一行後按下get data即可</h1>
     <a href="https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c" target="_blank">表單</a>-->
 <!--    <iframe width='500' height='300' frameborder='0' src='https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c'></iframe>-->
-    <table id="results"></table>
-    <hr>
-    <table id="results2"></table>
-    <script type="text/javascript">
-      var urls = [];
-      function saveUrl(json){
-        var rawtext = [];
-        for (var i=0; i < json.feed.entry.length; i++){
-          var entry = json.feed.entry[i];
-          if (entry.gs$cell.col == '1') {
-            //rawtext.push(entry.content.$t.split('/'));
-            var hahaha = entry.content.$t.split('/')
-            for (var k=0; k < hahaha.length; k++){
-              urls.push(hahaha[k]);
-            }
-          }
-        }
-        //        urls = rawtext.toString().split('/');
-        console.log(urls);
-      }
-    </script>
-    <script type="text/javascript" src="https://spreadsheets.google.com/feeds/cells/0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c/od6/public/values?alt=json-in-script&callback=saveUrl"></script>
+    <table class="result" id="sort"></table><table class="result" id="results"></table>
   </body>
 </html>
