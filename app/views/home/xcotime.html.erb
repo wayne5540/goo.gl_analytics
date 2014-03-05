@@ -31,8 +31,10 @@
     function getData(){
       callback=[];
       successNum = 0;
+      var startDate = $('#startDate').val();
+      var endDate = $('#startDate').val();
       for (var i=0; i < myUrls.length; i++){
-         var code = 'http://api.x.co/Reporting.svc/map/b790f487c59f47c39eed3c1090741b9b/'+ myUrls[i] +'/total';
+         var code = 'http://api.x.co/Reporting.svc/clicks/b790f487c59f47c39eed3c1090741b9b/'+ myUrls[i] +'/between?start=' + startDate +'&end='+ endDate +'';
          $.ajax({
            url: code,
            type: 'GET',
@@ -54,7 +56,7 @@
       $("#results").empty();
       $("#sort").empty();
       for ( var i=0; i < arr.length; i++){
-        $("<tr></tr>").append("<td>" + arr[i].data + "</td>")
+        $("<tr></tr>").append("<td>" + arr[i].data[0].Total + "</td>")
           .appendTo("#results");
       }
     }
@@ -82,10 +84,12 @@
     <h1>X.CO點擊查詢工具</h1>
     <h2>使用方式：把要查詢的網址們貼在下面(可以含文字)，然後按抓資料</h2>
     <textarea id="url" style="min-width:700px;min-height:200px;"></textarea></br>
+    <span>Select Date:</span> <input type="date" id="startDate">
     <button onclick="getUrl();">抓資料</button>
     <div>※請等抓完所有資料後再按顯示資料</div>
     <div id="status">目前：尚未開始抓取資料</div>
     <button onclick="sortData();">顯示資料</button>
+    <button onclick="test();">testetsttsttetts</button>
   <hr>
   <!--
     <h1>將要查詢的網址貼到第一行後按下get data即可</h1>
