@@ -1,6 +1,7 @@
 Helloworld::Application.routes.draw do
   root 'home#homepage'
   get  "home/geturl"
+  get 'shortMeBaby' => 'home#shortUrl'
   get 'xco' => 'home#geturl'
   get 'xcoByTime' => 'home#xcotime'
   get 'google' => 'home#index'

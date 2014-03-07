@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+  <script>
+    var successNum = 0;
+    var token = '';
+    var callback = [];
+    function getCallback(i, url) {
+       return function(data) {
+         if(!data.FaultCode){
+           var dataResult = { 
+             value: i,
+             data: data,
+             long: url
+           };
+          callback.push(dataResult);
+          //showData(data, i);
+         }
+       };
+    };
+    
+    function sortData(){
+      for ( var i=0; i <callback.length; i++ ){
+        newCallBack = callback.sort(function(a, b){
+          return a.value - b.value;
+        })
+      }
+      showData(newCallBack);
+    }
+
+    function getData(){
+      callback=[];
+      successNum = 0;
+      for (var i=0; i < myUrls.length; i++){
+        var code = 'http://api.x.co/Squeeze.svc/b790f487c59f47c39eed3c1090741b9b?url=' + myUrls[i] + '';
+         $.ajax({
+           url: code,
+           type: 'GET',
+           dataType: 'jsonp',
+           success: getCallback(i, myUrls[i]),
+           error: function() { console.log('ajax Failed!'); },
+           beforeSend: setHeader
+         }).done(function(value){
+           console.log(value);
+           if(!value.FaultCode){
+             successNum += 1;
+             $("#status").text("目前抓到: " + successNum + "筆資料");
+           }
+         });
+      }
+      console.log("done")
+    }
+    function showData(arr){
+      $("#results").empty();
+      $("#sort").empty();
+      for ( var i=0; i < arr.length; i++){
+        $("<tr></tr>").append("<td>" + arr[i].long + "</td>" + "<td>" + arr[i].data + "</td>")
+          .appendTo("#results");
+      }
+    }
+    function setHeader(xhr) {
+      xhr.setRequestHeader('Authorization', token);
+    }
+    function getUrl(){
+      myUrls = $("#url").val().split(/[\n]+/);
+      console.log(myUrls);
+      getData();
+    }
+    
+  </script>
+    <style>
+      .result{
+        display:inline-block;
+        border:1px solid;
+        margin-right:40px;
+      }
+      .result td{
+        border:1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>X.CO批次縮網址工具</h1>
+    <h2>使用方式：把要縮的網址貼在下面，每個網址<span style="color:red;">必須要使用換行符號區隔</span></h2>
+    <textarea id="url" style="min-width:700px;min-height:200px;"></textarea></br>
+    <button onclick="getUrl();">開始縮網址</button>
+    <div>※請等抓完所有資料後再按顯示資料</div>
+    <div id="status">目前：尚未開始抓取資料</div>
+    <button onclick="sortData();">顯示縮網址</button>
+  <hr>
+  <!--
+    <h1>將要查詢的網址貼到第一行後按下get data即可</h1>
+    <a href="https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c" target="_blank">表單</a>-->
+<!--    <iframe width='500' height='300' frameborder='0' src='https://docs.google.com/spreadsheet/ccc?key=0AjF9zJrj_kdUdGpsaUVWVzFtY2VzZzZaY2V1dXpja2c'></iframe>-->
+    <table class="result" id="sort"></table><table class="result" id="results"></table>
+  </body>
+</html>
