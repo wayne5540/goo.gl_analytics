@@ -33,7 +33,7 @@
       callback=[];
       successNum = 0;
       for (var i=0; i < myUrls.length; i++){
-        var code = 'http://api.x.co/Squeeze.svc/b790f487c59f47c39eed3c1090741b9b?url=' + myUrls[i] + '';
+        var code = 'http://api.x.co/Squeeze.svc/b790f487c59f47c39eed3c1090741b9b?url=' + escape(myUrls[i]) + '';
          $.ajax({
            url: code,
            type: 'GET',
